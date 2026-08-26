@@ -1,0 +1,771 @@
+<title>산화·환원 반응 가상 실험실</title>
+<style>
+  :root{
+    --bg:#eef1ee;
+    --paper-line:rgba(24,36,32,.05);
+    --surface:#ffffff;
+    --surface-2:#e3e9e4;
+    --ink:#182420;
+    --muted:#5a6a63;
+    --border:rgba(24,36,32,.13);
+    --accent:#1c7a6a;
+    --accent-ink:#ffffff;
+    --oxidation:#b5502c;
+    --oxidation-soft:rgba(181,80,44,.12);
+    --reduction:#2a6f8f;
+    --reduction-soft:rgba(42,111,143,.12);
+    --flame-1:#ffd166;
+    --flame-2:#e2672f;
+    --flash:#fff3c8;
+    --silver:#aeb8ba;
+    --shadow:0 1px 2px rgba(16,24,20,.07), 0 10px 28px -14px rgba(16,24,20,.22);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10161a; --paper-line:rgba(231,236,233,.05);
+      --surface:#1a2326; --surface-2:#212b2e; --ink:#e8ece9; --muted:#94a39d;
+      --border:rgba(231,236,233,.12);
+      --accent:#57c6b0; --accent-ink:#07211c;
+      --oxidation:#e2916b; --oxidation-soft:rgba(226,145,107,.15);
+      --reduction:#82c6e2; --reduction-soft:rgba(130,198,226,.15);
+      --flame-1:#ffd166; --flame-2:#f3813f; --flash:#fff4cd; --silver:#c7d0d2;
+      --shadow:0 1px 2px rgba(0,0,0,.5), 0 14px 32px -14px rgba(0,0,0,.65);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161a; --paper-line:rgba(231,236,233,.05);
+    --surface:#1a2326; --surface-2:#212b2e; --ink:#e8ece9; --muted:#94a39d;
+    --border:rgba(231,236,233,.12);
+    --accent:#57c6b0; --accent-ink:#07211c;
+    --oxidation:#e2916b; --oxidation-soft:rgba(226,145,107,.15);
+    --reduction:#82c6e2; --reduction-soft:rgba(130,198,226,.15);
+    --flame-1:#ffd166; --flame-2:#f3813f; --flash:#fff4cd; --silver:#c7d0d2;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 14px 32px -14px rgba(0,0,0,.65);
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1ee; --paper-line:rgba(24,36,32,.05);
+    --surface:#ffffff; --surface-2:#e3e9e4; --ink:#182420; --muted:#5a6a63;
+    --border:rgba(24,36,32,.13);
+    --accent:#1c7a6a; --accent-ink:#ffffff;
+    --oxidation:#b5502c; --oxidation-soft:rgba(181,80,44,.12);
+    --reduction:#2a6f8f; --reduction-soft:rgba(42,111,143,.12);
+    --flame-1:#ffd166; --flame-2:#e2672f; --flash:#fff3c8; --silver:#aeb8ba;
+    --shadow:0 1px 2px rgba(16,24,20,.07), 0 10px 28px -14px rgba(16,24,20,.22);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 32px,
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:900px;margin:0 auto;padding:48px 20px 80px;}
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    font-size:12.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;
+    font-weight:600;margin-bottom:14px;
+  }
+  .eyebrow .chip{
+    border:1px solid var(--border);border-radius:100px;padding:3px 10px;
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Consolas,monospace;
+    letter-spacing:0; text-transform:none; color:var(--accent); font-weight:700;
+    font-size:11.5px;
+  }
+  h1{
+    font-size:clamp(28px,4.4vw,40px);
+    line-height:1.18;
+    letter-spacing:-.01em;
+    margin:0 0 12px;
+    text-wrap:balance;
+    font-weight:800;
+  }
+  .lede{
+    color:var(--muted);
+    font-size:16px;
+    max-width:62ch;
+    margin:0 0 8px;
+  }
+  .scope-note{
+    display:inline-flex;gap:8px;align-items:baseline;
+    margin-top:14px;padding:10px 14px;
+    background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+    font-size:13.5px;color:var(--muted);
+  }
+  .scope-note b{color:var(--ink);font-weight:700;}
+
+  /* ---------- Legend ---------- */
+  .legend{
+    display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 36px;
+  }
+  .legend-item{
+    display:flex;align-items:center;gap:8px;
+    font-size:13.5px;font-weight:600;color:var(--muted);
+  }
+  .swatch{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .swatch.ox{background:var(--oxidation);}
+  .swatch.red{background:var(--reduction);}
+
+  /* ---------- Stations ---------- */
+  .stations{display:flex;flex-direction:column;gap:22px;}
+  .station{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .station-head{padding:22px 24px 4px;}
+  .station-tag{
+    display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.08em;
+    color:var(--accent-ink);background:var(--accent);border-radius:100px;
+    padding:3px 10px;margin-bottom:10px;text-transform:uppercase;
+  }
+  .station-head h2{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.01em;}
+  .station-desc{margin:0 0 6px;color:var(--muted);font-size:14px;}
+
+  .station-body{
+    display:grid;grid-template-columns:220px 1fr;gap:0;
+  }
+  @media (max-width:620px){
+    .station-body{grid-template-columns:1fr;}
+  }
+
+  .stage{
+    background:var(--surface-2);
+    display:flex;align-items:flex-end;justify-content:center;
+    padding:20px 12px 16px;
+    min-height:210px;
+    position:relative;
+    border-top:1px solid var(--border);
+  }
+  .panel{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--border);}
+  @media (max-width:620px){ .stage{border-right:none;} }
+  @media (min-width:621px){ .stage{border-right:1px solid var(--border);border-top:none;} .panel{border-top:none;} }
+
+  .controls{display:flex;gap:10px;flex-wrap:wrap;}
+  button{
+    font:inherit;cursor:pointer;border-radius:10px;padding:10px 16px;
+    font-weight:700;font-size:14px;letter-spacing:-.01em;
+    border:1px solid transparent;transition:transform .12s ease, filter .12s ease, opacity .12s ease;
+  }
+  button:active{transform:translateY(1px);}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-primary:disabled{opacity:.45;cursor:default;}
+  .btn-ghost{background:transparent;color:var(--muted);border-color:var(--border);}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--muted);}
+
+  .status{
+    font-size:13.5px;color:var(--muted);min-height:1.6em;
+  }
+  .status.live{color:var(--ink);font-weight:600;}
+
+  .equation{
+    margin-top:2px;padding:14px 16px;border-radius:12px;
+    background:var(--surface-2);border:1px solid var(--border);
+    opacity:0;transform:translateY(4px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .equation.show{opacity:1;transform:translateY(0);}
+  .eq-row{
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Consolas,monospace;
+    font-size:16px;font-weight:600;letter-spacing:.01em;
+    display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-bottom:10px;
+  }
+  .eq-row .op{color:var(--muted);font-weight:500;}
+  .term{padding:2px 4px;border-radius:5px;}
+  .term.oxidation{color:var(--oxidation);background:var(--oxidation-soft);}
+  .term.reduction{color:var(--reduction);background:var(--reduction-soft);}
+  .eq-tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .tag{
+    font-size:12px;font-weight:700;border-radius:100px;padding:4px 10px;
+  }
+  .tag.oxidation{color:var(--oxidation);background:var(--oxidation-soft);}
+  .tag.reduction{color:var(--reduction);background:var(--reduction-soft);}
+
+  /* ---------- SVG-free CSS apparatus ---------- */
+  /* Experiment 1: test tube + burner + limewater */
+  .rig1{display:flex;align-items:flex-end;gap:14px;}
+  .tube-wrap{position:relative;width:46px;height:150px;}
+  .tube{
+    position:absolute;left:0;right:0;bottom:0;height:140px;
+    border:3px solid var(--muted);border-top:none;border-radius:0 0 20px 20px;
+    background:linear-gradient(180deg, transparent, transparent);
+    overflow:hidden;
+  }
+  .tube-fill{
+    position:absolute;left:0;right:0;bottom:0;height:52%;
+    background:#2b2b2b; transition:background 1.4s ease;
+  }
+  .tube-fill.reacted{background:linear-gradient(180deg,#b5622f,#8f4522);}
+  .tube-neck{
+    position:absolute;top:-8px;left:8px;width:30px;height:14px;
+    border:3px solid var(--muted);border-bottom:none;border-radius:6px 6px 0 0;
+    transform:rotate(28deg);transform-origin:bottom left;
+  }
+  .delivery-tube{
+    position:absolute;top:-4px;left:34px;width:60px;height:3px;background:var(--muted);
+    transform:rotate(14deg) translateY(-2px);transform-origin:left center;border-radius:3px;
+  }
+  .burner{
+    position:relative;width:40px;height:52px;margin-left:-4px;
+  }
+  .burner-body{
+    position:absolute;bottom:0;left:6px;width:28px;height:22px;
+    background:var(--muted);border-radius:2px;
+  }
+  .burner-flame{
+    position:absolute;bottom:20px;left:12px;width:16px;height:26px;
+    background:radial-gradient(ellipse at 50% 100%, var(--flame-1), var(--flame-2) 70%, transparent 100%);
+    border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+    opacity:0; transform:scaleY(.4);
+    transform-origin:bottom center;
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .burner-flame.on{opacity:1;transform:scaleY(1);animation:flicker 1.1s ease-in-out infinite;}
+  @keyframes flicker{
+    0%,100%{transform:scaleY(1) scaleX(1);}
+    50%{transform:scaleY(1.12) scaleX(.92);}
+  }
+  .beaker{
+    position:relative;width:58px;height:60px;
+    border:3px solid var(--muted);border-top:none;border-radius:0 0 10px 10px;
+    background:transparent;overflow:hidden;align-self:flex-end;
+  }
+  .limewater{
+    position:absolute;left:0;right:0;bottom:0;height:70%;
+    background:rgba(180,200,210,.15);
+    transition:background 1.6s ease;
+  }
+  .limewater.cloudy{background:rgba(225,232,232,.92);}
+  .bubble{
+    position:absolute;width:5px;height:5px;border-radius:50%;
+    background:rgba(255,255,255,.85);
+    bottom:6px;opacity:0;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0);opacity:0;}
+    15%{opacity:.9;}
+    100%{transform:translateY(-42px);opacity:0;}
+  }
+  .bubble.go{animation:rise 1.1s ease-in infinite;}
+
+  /* Experiment 2: magnesium ribbon */
+  .rig2{position:relative;width:100%;height:170px;display:flex;align-items:center;justify-content:center;}
+  .clamp{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:34px;height:10px;background:var(--muted);border-radius:2px;}
+  .ribbon{
+    position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    width:8px;height:110px;background:linear-gradient(180deg,#c7cdce,#9aa3a5);
+    border-radius:2px;
+    transition:height 1.2s ease, background 1.2s ease, opacity 1.2s ease;
+  }
+  .ribbon.burnt{height:26px;background:#e7e9e6;opacity:.9;}
+  .ash-pile{
+    position:absolute;bottom:18px;left:50%;transform:translateX(-50%) scale(.4);
+    width:34px;height:10px;border-radius:50%;
+    background:#f1f2ee;opacity:0;
+    transition:opacity 1s ease .6s, transform 1s ease .6s;
+  }
+  .ash-pile.show{opacity:1;transform:translateX(-50%) scale(1);}
+  .flash-burst{
+    position:absolute;top:40px;left:50%;transform:translate(-50%,-50%) scale(0);
+    width:40px;height:40px;border-radius:50%;
+    background:radial-gradient(circle, var(--flash), transparent 70%);
+    opacity:0;pointer-events:none;
+  }
+  .flash-burst.go{animation:burst .7s ease-out;}
+  @keyframes burst{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.2);}
+    30%{opacity:1;}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(6);}
+  }
+  .electron{
+    position:absolute;width:9px;height:9px;border-radius:50%;
+    background:var(--reduction);color:var(--surface);
+    font-size:7px;font-weight:800;display:flex;align-items:center;justify-content:center;
+    top:60px;left:50%;opacity:0;
+  }
+  .electron.go{animation:efly 1.1s ease-in-out .3s;}
+  @keyframes efly{
+    0%{opacity:0;transform:translate(-50%,0) scale(.6);}
+    15%{opacity:1;}
+    80%{opacity:1;}
+    100%{opacity:0;transform:translate(calc(-50% + var(--dx,26px)), var(--dy,-8px)) scale(.6);}
+  }
+
+  /* Experiment 3: beaker + copper wire + AgNO3 */
+  .rig3{position:relative;width:130px;height:150px;}
+  .beaker3{
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:110px;height:110px;
+    border:3px solid var(--muted);border-top:none;border-radius:0 0 12px 12px;
+    overflow:hidden;background:transparent;
+  }
+  .solution{
+    position:absolute;left:0;right:0;bottom:0;height:80%;
+    background:rgba(120,150,160,.08);
+    transition:background 2.4s ease;
+  }
+  .solution.blue{background:rgba(58,110,165,.55);}
+  .wire{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    width:6px;height:118px;background:#c3805a;border-radius:2px;
+  }
+  .crystal{
+    position:absolute;width:5px;height:5px;border-radius:1px;
+    background:var(--silver);opacity:0;transform:scale(.4);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .crystal.show{opacity:1;transform:scale(1);}
+  .ion{
+    position:absolute;font-family:ui-monospace,SFMono-Regular,monospace;
+    font-size:9px;font-weight:800;opacity:0;
+  }
+  .ion.cu{color:var(--oxidation);}
+  .ion.ag{color:var(--reduction);}
+  .ion.go{animation:drift 1.6s ease-in-out infinite;}
+  @keyframes drift{
+    0%{opacity:0;transform:translate(0,0);}
+    20%{opacity:1;}
+    80%{opacity:1;}
+    100%{opacity:0;transform:translate(var(--dx,18px), var(--dy,-10px));}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .burner-flame.on{animation:none;}
+    .bubble.go{animation:none;opacity:.7;}
+    .flash-burst.go{animation:none;}
+    .electron.go{animation:none;opacity:0;}
+    .ion.go{animation:none;opacity:0;}
+  }
+
+  /* ---------- Applications ---------- */
+  .apps{
+    margin-top:34px;
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  }
+  @media (max-width:620px){ .apps{grid-template-columns:1fr;} }
+  .app-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:18px 20px;box-shadow:var(--shadow);
+  }
+  .app-card h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}
+  .app-card p{margin:0 0 10px;color:var(--muted);font-size:13.5px;}
+
+  /* ---------- Summary table ---------- */
+  .summary{margin-top:40px;}
+  h2.section-title{font-size:22px;font-weight:800;margin:0 0 14px;letter-spacing:-.01em;}
+  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);}
+  table{border-collapse:collapse;width:100%;min-width:480px;font-size:14px;}
+  th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);}
+  thead th{
+    font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    background:var(--surface-2);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td.ox-cell{color:var(--oxidation);font-weight:700;}
+  td.red-cell{color:var(--reduction);font-weight:700;}
+  td.dim{color:var(--muted);}
+
+  /* ---------- Check ---------- */
+  .check{margin-top:40px;}
+  .qcard{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;
+  }
+  .qcard p.q{font-weight:700;margin:0 0 12px;font-size:14.5px;}
+  .options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+  .opt{
+    border:1px solid var(--border);background:var(--surface-2);border-radius:9px;
+    padding:8px 14px;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .opt.correct{background:var(--reduction-soft);border-color:var(--reduction);color:var(--reduction);}
+  .opt.wrong{background:var(--oxidation-soft);border-color:var(--oxidation);color:var(--oxidation);}
+  .explain{font-size:13px;color:var(--muted);display:none;padding-top:4px;border-top:1px dashed var(--border);margin-top:4px;}
+  .explain.show{display:block;}
+
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;}
+</style>
+
+<div class="page">
+  <div class="eyebrow">
+    <span>통합과학2 · Ⅰ. 변화와 다양성 · 01. 산화와 환원</span>
+    <span class="chip">[10통과2-01-03]</span>
+  </div>
+  <h1>산화·환원 반응 가상 실험실</h1>
+  <p class="lede">세 가지 반응을 직접 실행해 보면서, 산소의 이동과 전자의 이동이라는 두 가지 관점으로 산화와 환원을 설명해 봅시다.</p>
+  <div class="scope-note">⚠ <span><b>이 단원에서는 산화수를 다루지 않습니다.</b> 산소를 얻거나 잃는지, 전자를 얻거나 잃는지로만 산화·환원을 판단합니다.</span></div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="swatch ox"></span>산화 — 산소를 얻음 / 전자를 잃음</span>
+    <span class="legend-item"><span class="swatch red"></span>환원 — 산소를 잃음 / 전자를 얻음</span>
+  </div>
+
+  <main class="stations">
+
+    <!-- Station 1: CuO + C -->
+    <article class="station" id="s1">
+      <div class="station-head">
+        <span class="station-tag">실험 1 · 산소의 이동</span>
+        <h2>산화 구리(Ⅱ)와 탄소의 반응</h2>
+        <p class="station-desc">검은색 산화 구리(Ⅱ)와 탄소 가루를 가열하면 어떤 일이 일어날까요?</p>
+      </div>
+      <div class="station-body">
+        <div class="stage">
+          <div class="rig1">
+            <div class="tube-wrap">
+              <div class="tube-neck"></div>
+              <div class="delivery-tube"></div>
+              <div class="tube"><div class="tube-fill" id="s1-fill"></div></div>
+            </div>
+            <div class="burner">
+              <div class="burner-flame" id="s1-flame"></div>
+              <div class="burner-body"></div>
+            </div>
+            <div class="beaker">
+              <div class="limewater" id="s1-lime"></div>
+              <div class="bubble" id="s1-b1" style="left:16px;"></div>
+              <div class="bubble" id="s1-b2" style="left:30px;animation-delay:.3s;"></div>
+              <div class="bubble" id="s1-b3" style="left:40px;animation-delay:.6s;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="controls">
+            <button class="btn-primary" id="s1-run">가열하기</button>
+            <button class="btn-ghost" id="s1-reset" hidden>다시 하기</button>
+          </div>
+          <p class="status" id="s1-status">시험관에 검은색 산화 구리(Ⅱ)와 탄소 가루 혼합물이 들어 있고, 발생하는 기체는 고무관을 통해 석회수로 이동합니다.</p>
+          <div class="equation" id="s1-eq">
+            <div class="eq-row">
+              <span class="term reduction">2CuO</span><span class="op">+</span><span class="term">C</span>
+              <span class="op">→</span>
+              <span class="term">2Cu</span><span class="op">+</span><span class="term oxidation">CO₂</span>
+            </div>
+            <div class="eq-tags">
+              <span class="tag reduction">환원 · CuO가 산소를 잃어 Cu가 됨</span>
+              <span class="tag oxidation">산화 · C가 산소를 얻어 CO₂가 됨</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Station 2: Mg combustion -->
+    <article class="station" id="s2">
+      <div class="station-head">
+        <span class="station-tag">실험 2 · 전자의 이동</span>
+        <h2>마그네슘의 연소</h2>
+        <p class="station-desc">마그네슘 리본에 불을 붙이면 밝은 빛과 함께 흰색 가루가 생깁니다. 산소가 이동하지 않아도 산화·환원은 일어날까요?</p>
+      </div>
+      <div class="station-body">
+        <div class="stage">
+          <div class="rig2">
+            <div class="flash-burst" id="s2-flash"></div>
+            <div class="clamp"></div>
+            <div class="ribbon" id="s2-ribbon"></div>
+            <div class="ash-pile" id="s2-ash"></div>
+            <div class="electron" id="s2-e1" style="--dx:34px;--dy:6px;">e⁻</div>
+            <div class="electron" id="s2-e2" style="--dx:-34px;--dy:6px;">e⁻</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="controls">
+            <button class="btn-primary" id="s2-run">점화하기</button>
+            <button class="btn-ghost" id="s2-reset" hidden>다시 하기</button>
+          </div>
+          <p class="status" id="s2-status">은백색 마그네슘 리본이 집게에 고정되어 있습니다.</p>
+          <div class="equation" id="s2-eq">
+            <div class="eq-row">
+              <span class="term oxidation">Mg</span><span class="op">→</span>
+              <span class="term oxidation">Mg²⁺</span><span class="op">+</span><span class="term">2e⁻</span>
+            </div>
+            <div class="eq-row">
+              <span class="term">O</span><span class="op">+</span><span class="term">2e⁻</span><span class="op">→</span>
+              <span class="term reduction">O²⁻</span>
+            </div>
+            <div class="eq-tags">
+              <span class="tag oxidation">산화 · Mg가 전자를 잃음</span>
+              <span class="tag reduction">환원 · O가 전자를 얻음</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Station 3: Cu + AgNO3 -->
+    <article class="station" id="s3">
+      <div class="station-head">
+        <span class="station-tag">실험 3 · 전자의 이동</span>
+        <h2>구리와 질산 은 수용액의 반응</h2>
+        <p class="station-desc">무색의 질산 은 수용액에 구리 선을 넣으면 어떤 변화가 나타날까요?</p>
+      </div>
+      <div class="station-body">
+        <div class="stage">
+          <div class="rig3">
+            <div class="beaker3">
+              <div class="solution" id="s3-sol"></div>
+              <div class="wire" id="s3-wire"></div>
+              <div class="crystal" id="s3-c1" style="left:38px;bottom:30px;"></div>
+              <div class="crystal" id="s3-c2" style="left:70px;bottom:50px;"></div>
+              <div class="crystal" id="s3-c3" style="left:42px;bottom:66px;"></div>
+              <div class="crystal" id="s3-c4" style="left:66px;bottom:22px;"></div>
+              <div class="ion cu" id="s3-i1" style="left:44px;bottom:40px;--dx:24px;--dy:-14px;">Cu²⁺</div>
+              <div class="ion ag" id="s3-i2" style="left:68px;bottom:60px;--dx:-20px;--dy:10px;">Ag⁺</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="controls">
+            <button class="btn-primary" id="s3-run">구리선 담그기</button>
+            <button class="btn-ghost" id="s3-reset" hidden>다시 하기</button>
+          </div>
+          <p class="status" id="s3-status">무색의 질산 은(AgNO₃) 수용액에 구리 선이 아직 닿지 않았습니다.</p>
+          <div class="equation" id="s3-eq">
+            <div class="eq-row">
+              <span class="term oxidation">Cu</span><span class="op">→</span>
+              <span class="term oxidation">Cu²⁺</span><span class="op">+</span><span class="term">2e⁻</span>
+            </div>
+            <div class="eq-row">
+              <span class="term">2Ag⁺</span><span class="op">+</span><span class="term">2e⁻</span><span class="op">→</span>
+              <span class="term reduction">2Ag</span>
+            </div>
+            <div class="eq-tags">
+              <span class="tag oxidation">산화 · Cu가 전자를 잃고 수용액에 녹아 들어감(푸른색)</span>
+              <span class="tag reduction">환원 · Ag⁺이 전자를 얻어 은으로 석출됨</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <section class="apps">
+    <div class="app-card">
+      <h3>철의 제련</h3>
+      <p>용광로에서 코크스가 산화되어 생긴 일산화 탄소가 산화 철(Ⅲ)의 산소를 빼앗습니다. 철 이온은 환원되어 순수한 철이 됩니다.</p>
+      <div class="eq-row" style="font-size:14px;">
+        <span class="term reduction">Fe₂O₃</span><span class="op">+</span><span class="term">3CO</span><span class="op">→</span>
+        <span class="term">2Fe</span><span class="op">+</span><span class="term oxidation">3CO₂</span>
+      </div>
+    </div>
+    <div class="app-card">
+      <h3>수소 연료 전지</h3>
+      <p>수소는 전자를 잃고 산화되며, 산소는 전자를 얻어 환원됩니다. 이 과정에서 화학 에너지가 전기 에너지로 전환됩니다.</p>
+      <div class="eq-row" style="font-size:14px;">
+        <span class="term oxidation">2H₂</span><span class="op">+</span><span class="term reduction">O₂</span><span class="op">→</span>
+        <span class="term">2H₂O</span><span class="op">+ 전기 에너지</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary">
+    <h2 class="section-title">개념 정리</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>관점</th><th class="ox-cell">산화</th><th class="red-cell">환원</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>산소</td><td class="ox-cell">산소를 얻음</td><td class="red-cell">산소를 잃음</td></tr>
+          <tr><td>전자</td><td class="ox-cell">전자를 잃음</td><td class="red-cell">전자를 얻음</td></tr>
+          <tr><td>실험 1 (CuO + C)</td><td class="ox-cell">C → CO₂</td><td class="red-cell">CuO → Cu</td></tr>
+          <tr><td>실험 2 (Mg 연소)</td><td class="ox-cell">Mg → Mg²⁺</td><td class="red-cell">O → O²⁻</td></tr>
+          <tr><td>실험 3 (Cu + AgNO₃)</td><td class="ox-cell">Cu → Cu²⁺</td><td class="red-cell">Ag⁺ → Ag</td></tr>
+          <tr><td class="dim">공통 규칙</td><td class="dim" colspan="2">산화와 환원은 반드시 동시에 일어난다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="check">
+    <h2 class="section-title">개념 확인</h2>
+
+    <div class="qcard">
+      <p class="q">Q1. 산화 구리(Ⅱ)와 탄소의 반응에서 탄소(C)는 산화되었을까, 환원되었을까?</p>
+      <div class="options">
+        <button class="opt" data-correct="true">산화되었다</button>
+        <button class="opt">환원되었다</button>
+      </div>
+      <p class="explain">탄소는 산화 구리(Ⅱ)로부터 산소를 얻어 이산화 탄소(CO₂)가 되었으므로 산화되었습니다.</p>
+    </div>
+
+    <div class="qcard">
+      <p class="q">Q2. 질산 은 수용액에 구리 선을 넣었을 때 수용액이 푸른색으로 변하는 까닭은?</p>
+      <div class="options">
+        <button class="opt">은 이온이 전자를 얻었기 때문</button>
+        <button class="opt" data-correct="true">구리가 전자를 잃고 구리 이온이 되어 녹아 들어갔기 때문</button>
+      </div>
+      <p class="explain">구리(Cu)가 전자를 잃고 산화되어 구리 이온(Cu²⁺)으로 수용액에 녹아 들어가면서 푸른색을 나타냅니다.</p>
+    </div>
+
+    <div class="qcard">
+      <p class="q">Q3. 마그네슘의 연소처럼 전자 이동으로 정의한 산화·환원 반응에서, 반드시 산소가 관여해야 할까?</p>
+      <div class="options">
+        <button class="opt">그렇다, 산소가 항상 필요하다</button>
+        <button class="opt" data-correct="true">아니다, 전자만 이동해도 산화·환원 반응이다</button>
+      </div>
+      <p class="explain">구리와 질산 은 수용액의 반응처럼 산소 없이 전자만 이동해도 산화·환원 반응으로 설명할 수 있습니다.</p>
+    </div>
+  </section>
+
+  <footer>
+    고등학교 통합과학2 「Ⅰ. 변화와 다양성 — 01. 산화와 환원」 내용을 바탕으로 구성한 학습용 시뮬레이션입니다. 실제 실험은 반드시 교사의 지도와 안전 수칙에 따라 진행하세요.
+  </footer>
+</div>
+
+<script>
+(function(){
+  function wireStation(cfg){
+    const runBtn = document.getElementById(cfg.run);
+    const resetBtn = document.getElementById(cfg.reset);
+    runBtn.onclick = function(){
+      runBtn.disabled = true;
+      cfg.start();
+    };
+    resetBtn.onclick = function(){
+      cfg.reset();
+      runBtn.disabled = false;
+      resetBtn.hidden = true;
+    };
+  }
+
+  // ---------- Station 1 ----------
+  wireStation({
+    run:'s1-run', reset:'s1-reset',
+    start:function(){
+      const status = document.getElementById('s1-status');
+      const fill = document.getElementById('s1-fill');
+      const flame = document.getElementById('s1-flame');
+      const lime = document.getElementById('s1-lime');
+      const eq = document.getElementById('s1-eq');
+      const bubbles = ['s1-b1','s1-b2','s1-b3'].map(id=>document.getElementById(id));
+      const resetBtn = document.getElementById('s1-reset');
+
+      status.classList.add('live');
+      status.textContent = '가열을 시작합니다. 시험관 속 혼합물의 온도가 올라갑니다...';
+      flame.classList.add('on');
+      setTimeout(()=>{
+        bubbles.forEach(b => b.classList.add('go'));
+        status.textContent = '기체가 발생하여 고무관을 통해 석회수로 이동하고 있습니다.';
+      }, 500);
+      setTimeout(()=>{
+        fill.classList.add('reacted');
+        lime.classList.add('cloudy');
+      }, 1400);
+      setTimeout(()=>{
+        status.textContent = '반응 완료: 검은색 물질이 붉은색 구리로 바뀌었고, 석회수가 뿌옇게 흐려졌습니다.';
+        eq.classList.add('show');
+        resetBtn.hidden = false;
+      }, 2400);
+    },
+    reset:function(){
+      document.getElementById('s1-status').classList.remove('live');
+      document.getElementById('s1-status').textContent = '시험관에 검은색 산화 구리(Ⅱ)와 탄소 가루 혼합물이 들어 있고, 발생하는 기체는 고무관을 통해 석회수로 이동합니다.';
+      document.getElementById('s1-fill').classList.remove('reacted');
+      document.getElementById('s1-flame').classList.remove('on');
+      document.getElementById('s1-lime').classList.remove('cloudy');
+      ['s1-b1','s1-b2','s1-b3'].forEach(id=>document.getElementById(id).classList.remove('go'));
+      document.getElementById('s1-eq').classList.remove('show');
+    }
+  });
+
+  // ---------- Station 2 ----------
+  wireStation({
+    run:'s2-run', reset:'s2-reset',
+    start:function(){
+      const status = document.getElementById('s2-status');
+      const ribbon = document.getElementById('s2-ribbon');
+      const ash = document.getElementById('s2-ash');
+      const flash = document.getElementById('s2-flash');
+      const e1 = document.getElementById('s2-e1');
+      const e2 = document.getElementById('s2-e2');
+      const eq = document.getElementById('s2-eq');
+      const resetBtn = document.getElementById('s2-reset');
+
+      status.classList.add('live');
+      status.textContent = '점화합니다. 마그네슘이 밝은 빛을 내며 타기 시작합니다...';
+      flash.classList.add('go');
+      e1.classList.add('go');
+      e2.classList.add('go');
+      setTimeout(()=>{
+        ribbon.classList.add('burnt');
+        ash.classList.add('show');
+      }, 350);
+      setTimeout(()=>{
+        status.textContent = '반응 완료: 은백색 리본이 흰색 산화 마그네슘 가루로 바뀌었습니다.';
+        eq.classList.add('show');
+        resetBtn.hidden = false;
+      }, 1500);
+    },
+    reset:function(){
+      document.getElementById('s2-status').classList.remove('live');
+      document.getElementById('s2-status').textContent = '은백색 마그네슘 리본이 집게에 고정되어 있습니다.';
+      document.getElementById('s2-ribbon').classList.remove('burnt');
+      document.getElementById('s2-ash').classList.remove('show');
+      document.getElementById('s2-flash').classList.remove('go');
+      document.getElementById('s2-e1').classList.remove('go');
+      document.getElementById('s2-e2').classList.remove('go');
+      document.getElementById('s2-eq').classList.remove('show');
+    }
+  });
+
+  // ---------- Station 3 ----------
+  wireStation({
+    run:'s3-run', reset:'s3-reset',
+    start:function(){
+      const status = document.getElementById('s3-status');
+      const sol = document.getElementById('s3-sol');
+      const crystals = ['s3-c1','s3-c2','s3-c3','s3-c4'].map(id=>document.getElementById(id));
+      const ions = ['s3-i1','s3-i2'].map(id=>document.getElementById(id));
+      const eq = document.getElementById('s3-eq');
+      const resetBtn = document.getElementById('s3-reset');
+
+      status.classList.add('live');
+      status.textContent = '구리 선을 수용액에 담갔습니다. 반응이 서서히 진행됩니다...';
+      ions.forEach(i => i.classList.add('go'));
+      setTimeout(()=>{ sol.classList.add('blue'); }, 300);
+      setTimeout(()=>{ crystals.forEach((c,i)=> setTimeout(()=>c.classList.add('show'), i*220)); }, 900);
+      setTimeout(()=>{
+        status.textContent = '반응 완료: 수용액이 푸른색으로 변했고, 구리 선 표면에 은 결정이 석출되었습니다.';
+        eq.classList.add('show');
+        resetBtn.hidden = false;
+      }, 2000);
+    },
+    reset:function(){
+      document.getElementById('s3-status').classList.remove('live');
+      document.getElementById('s3-status').textContent = '무색의 질산 은(AgNO₃) 수용액에 구리 선이 아직 닿지 않았습니다.';
+      document.getElementById('s3-sol').classList.remove('blue');
+      ['s3-c1','s3-c2','s3-c3','s3-c4'].forEach(id=>document.getElementById(id).classList.remove('show'));
+      ['s3-i1','s3-i2'].forEach(id=>document.getElementById(id).classList.remove('go'));
+      document.getElementById('s3-eq').classList.remove('show');
+    }
+  });
+
+  // ---------- Quick check ----------
+  document.querySelectorAll('.qcard').forEach(card => {
+    const opts = card.querySelectorAll('.opt');
+    const explain = card.querySelector('.explain');
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        if(opt.classList.contains('correct') || opt.classList.contains('wrong')) return;
+        opts.forEach(o => o.disabled = true);
+        if(opt.dataset.correct === 'true'){
+          opt.classList.add('correct');
+        } else {
+          opt.classList.add('wrong');
+          const correctOpt = Array.from(opts).find(o => o.dataset.correct === 'true');
+          if(correctOpt) correctOpt.classList.add('correct');
+        }
+        explain.classList.add('show');
+      });
+    });
+  });
+})();
+</script>

@@ -173,8 +173,8 @@
   }
   .equation.show{opacity:1;transform:translateY(0);}
   .eq-row{
-    font-family:ui-monospace,SFMono-Regular,"SF Mono",Consolas,monospace;
-    font-size:16px;font-weight:600;letter-spacing:.01em;
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",sans-serif;
+    font-size:17px;font-weight:800;letter-spacing:.01em;
     display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-bottom:10px;
   }
   .eq-row .op{color:var(--muted);font-weight:500;}
@@ -482,16 +482,12 @@
           <p class="status" id="s2-status">은백색 마그네슘 리본이 집게에 고정되어 있습니다.</p>
           <div class="equation" id="s2-eq">
             <div class="eq-row">
-              <span class="term oxidation">Mg</span><span class="op">→</span>
-              <span class="term oxidation">Mg²⁺</span><span class="op">+</span><span class="term">2e⁻</span>
-            </div>
-            <div class="eq-row">
-              <span class="term">O</span><span class="op">+</span><span class="term">2e⁻</span><span class="op">→</span>
-              <span class="term reduction">O²⁻</span>
+              <span class="term oxidation">2Mg</span><span class="op">+</span><span class="term reduction">O₂</span>
+              <span class="op">→</span><span class="term">2MgO</span>
             </div>
             <div class="eq-tags">
               <span class="tag oxidation">산화 · Mg가 전자를 잃음</span>
-              <span class="tag reduction">환원 · O가 전자를 얻음</span>
+              <span class="tag reduction">환원 · O₂가 전자를 얻음</span>
             </div>
           </div>
         </div>
@@ -576,7 +572,7 @@
           <tr><td>산소</td><td class="ox-cell">산소를 얻음</td><td class="red-cell">산소를 잃음</td></tr>
           <tr><td>전자</td><td class="ox-cell">전자를 잃음</td><td class="red-cell">전자를 얻음</td></tr>
           <tr><td>실험 1 (CuO + C)</td><td class="ox-cell">C → CO₂</td><td class="red-cell">CuO → Cu</td></tr>
-          <tr><td>실험 2 (Mg 연소)</td><td class="ox-cell">Mg → Mg²⁺</td><td class="red-cell">O → O²⁻</td></tr>
+          <tr><td>실험 2 (Mg 연소)</td><td class="ox-cell">Mg → Mg²⁺</td><td class="red-cell">O₂ → 2O²⁻</td></tr>
           <tr><td>실험 3 (Cu + AgNO₃)</td><td class="ox-cell">Cu → Cu²⁺</td><td class="red-cell">Ag⁺ → Ag</td></tr>
           <tr><td class="dim">공통 규칙</td><td class="dim" colspan="2">산화와 환원은 반드시 동시에 일어난다.</td></tr>
         </tbody>

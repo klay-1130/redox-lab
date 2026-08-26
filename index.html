@@ -624,13 +624,13 @@
 (function(){
   function wireStation(cfg){
     const runBtn = document.getElementById(cfg.run);
-    const resetBtn = document.getElementById(cfg.reset);
+    const resetBtn = document.getElementById(cfg.resetId);
     runBtn.onclick = function(){
       runBtn.disabled = true;
       cfg.start();
     };
     resetBtn.onclick = function(){
-      cfg.reset();
+      cfg.onReset();
       runBtn.disabled = false;
       resetBtn.hidden = true;
     };
@@ -638,7 +638,7 @@
 
   // ---------- Station 1 ----------
   wireStation({
-    run:'s1-run', reset:'s1-reset',
+    run:'s1-run', resetId:'s1-reset',
     start:function(){
       const status = document.getElementById('s1-status');
       const fill = document.getElementById('s1-fill');
@@ -665,7 +665,7 @@
         resetBtn.hidden = false;
       }, 2400);
     },
-    reset:function(){
+    onReset:function(){
       document.getElementById('s1-status').classList.remove('live');
       document.getElementById('s1-status').textContent = '시험관에 검은색 산화 구리(Ⅱ)와 탄소 가루 혼합물이 들어 있고, 발생하는 기체는 고무관을 통해 석회수로 이동합니다.';
       document.getElementById('s1-fill').classList.remove('reacted');
@@ -678,7 +678,7 @@
 
   // ---------- Station 2 ----------
   wireStation({
-    run:'s2-run', reset:'s2-reset',
+    run:'s2-run', resetId:'s2-reset',
     start:function(){
       const status = document.getElementById('s2-status');
       const ribbon = document.getElementById('s2-ribbon');
@@ -704,7 +704,7 @@
         resetBtn.hidden = false;
       }, 1500);
     },
-    reset:function(){
+    onReset:function(){
       document.getElementById('s2-status').classList.remove('live');
       document.getElementById('s2-status').textContent = '은백색 마그네슘 리본이 집게에 고정되어 있습니다.';
       document.getElementById('s2-ribbon').classList.remove('burnt');
@@ -718,7 +718,7 @@
 
   // ---------- Station 3 ----------
   wireStation({
-    run:'s3-run', reset:'s3-reset',
+    run:'s3-run', resetId:'s3-reset',
     start:function(){
       const status = document.getElementById('s3-status');
       const sol = document.getElementById('s3-sol');
@@ -738,7 +738,7 @@
         resetBtn.hidden = false;
       }, 2000);
     },
-    reset:function(){
+    onReset:function(){
       document.getElementById('s3-status').classList.remove('live');
       document.getElementById('s3-status').textContent = '무색의 질산 은(AgNO₃) 수용액에 구리 선이 아직 닿지 않았습니다.';
       document.getElementById('s3-sol').classList.remove('blue');

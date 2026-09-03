@@ -328,6 +328,8 @@
   }
   .ion.cu{color:var(--oxidation);}
   .ion.ag{color:var(--reduction);}
+  .ion.oxidized{color:var(--oxidation);}
+  .ion.reduced{color:var(--reduction);}
   .ion.go{animation:drift 1.6s ease-in-out infinite;}
   @keyframes drift{
     0%{opacity:0;transform:translate(0,0);}
@@ -335,6 +337,21 @@
     80%{opacity:1;}
     100%{opacity:0;transform:translate(var(--dx,18px), var(--dy,-10px));}
   }
+
+  /* Experiment 4: zinc plate + copper sulfate solution */
+  .solution.faded{background:rgba(120,150,160,.08);}
+  .plate{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    width:22px;height:112px;background:linear-gradient(180deg,#c7cdce,#9aa3a5);
+    border-radius:2px;
+  }
+  .deposit{
+    position:absolute;width:9px;height:7px;border-radius:1px;
+    background:linear-gradient(135deg,#b5622f,#8f4522);
+    opacity:0;transform:scale(.5);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .deposit.show{opacity:1;transform:scale(1);}
 
   @media (prefers-reduced-motion: reduce){
     .burner-flame.on{animation:none;}
@@ -398,7 +415,7 @@
     <span class="chip">[10통과2-01-03]</span>
   </div>
   <h1>산화·환원 반응 가상 실험실</h1>
-  <p class="lede">세 가지 반응을 직접 실행해 보면서, 산소의 이동과 전자의 이동이라는 두 가지 관점으로 산화와 환원을 설명해 봅시다.</p>
+  <p class="lede">네 가지 반응을 직접 실행해 보면서, 산소의 이동과 전자의 이동이라는 두 가지 관점으로 산화와 환원을 설명해 봅시다.</p>
   <div class="scope-note">⚠ <span><b>이 단원에서는 산화수를 다루지 않습니다.</b> 산소를 얻거나 잃는지, 전자를 얻거나 잃는지로만 산화·환원을 판단합니다.</span></div>
 
   <div class="legend">
@@ -537,6 +554,49 @@
       </div>
     </article>
 
+    <!-- Station 4: Zn + CuSO4 -->
+    <article class="station" id="s4">
+      <div class="station-head">
+        <span class="station-tag">실험 4 · 전자의 이동</span>
+        <h2>아연판과 황산 구리 수용액의 반응</h2>
+        <p class="station-desc">파란색의 황산 구리(Ⅱ) 수용액에 아연판을 넣으면 어떤 변화가 나타날까요?</p>
+      </div>
+      <div class="station-body">
+        <div class="stage">
+          <div class="rig3">
+            <div class="beaker3">
+              <div class="solution" id="s4-sol" style="background:rgba(58,110,165,.55);"></div>
+              <div class="plate" id="s4-plate"></div>
+              <div class="deposit" id="s4-d1" style="left:36px;bottom:28px;"></div>
+              <div class="deposit" id="s4-d2" style="left:64px;bottom:44px;"></div>
+              <div class="deposit" id="s4-d3" style="left:38px;bottom:64px;"></div>
+              <div class="deposit" id="s4-d4" style="left:62px;bottom:20px;"></div>
+              <div class="ion oxidized" id="s4-i1" style="left:44px;bottom:40px;--dx:24px;--dy:-14px;">Zn²⁺</div>
+              <div class="ion reduced" id="s4-i2" style="left:68px;bottom:60px;--dx:-20px;--dy:10px;">Cu²⁺</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="controls">
+            <button class="btn-primary" id="s4-run">아연판 담그기</button>
+            <button class="btn-ghost" id="s4-reset" hidden>다시 하기</button>
+          </div>
+          <p class="status" id="s4-status">파란색의 황산 구리(CuSO₄) 수용액에 아연판이 아직 닿지 않았습니다.</p>
+          <div class="equation" id="s4-eq">
+            <div class="eq-row">
+              <span class="term oxidation">Zn</span><span class="op">+</span>
+              <span class="term reduction">CuSO₄</span><span class="op">→</span>
+              <span class="term">ZnSO₄</span><span class="op">+</span><span class="term reduction">Cu</span>
+            </div>
+            <div class="eq-tags">
+              <span class="tag oxidation">산화 · Zn이 전자를 잃고 아연 이온이 되어 수용액에 녹아 들어감</span>
+              <span class="tag reduction">환원 · Cu²⁺이 전자를 얻어 붉은색 구리로 석출되며 푸른색이 옅어짐</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
   </main>
 
   <section class="apps">
@@ -571,6 +631,7 @@
           <tr><td>실험 1 (CuO + C)</td><td class="ox-cell">C → CO₂</td><td class="red-cell">CuO → Cu</td></tr>
           <tr><td>실험 2 (Mg 연소)</td><td class="ox-cell">Mg → Mg²⁺</td><td class="red-cell">O₂ → 2O²⁻</td></tr>
           <tr><td>실험 3 (Cu + AgNO₃)</td><td class="ox-cell">Cu → Cu²⁺</td><td class="red-cell">Ag⁺ → Ag</td></tr>
+          <tr><td>실험 4 (Zn + CuSO₄)</td><td class="ox-cell">Zn → Zn²⁺</td><td class="red-cell">Cu²⁺ → Cu</td></tr>
           <tr><td class="dim">공통 규칙</td><td class="dim" colspan="2">산화와 환원은 반드시 동시에 일어난다.</td></tr>
         </tbody>
       </table>
@@ -605,6 +666,15 @@
         <button class="opt" data-correct="true">아니다, 전자만 이동해도 산화·환원 반응이다</button>
       </div>
       <p class="explain">구리와 질산 은 수용액의 반응처럼 산소 없이 전자만 이동해도 산화·환원 반응으로 설명할 수 있습니다.</p>
+    </div>
+
+    <div class="qcard">
+      <p class="q">Q4. 황산 구리 수용액에 아연판을 넣었을 때 수용액의 푸른색이 옅어지는 까닭은?</p>
+      <div class="options">
+        <button class="opt">아연판이 전자를 얻었기 때문</button>
+        <button class="opt" data-correct="true">구리 이온이 전자를 얻어 구리로 석출되면서 수용액 속 구리 이온의 양이 줄어들기 때문</button>
+      </div>
+      <p class="explain">구리 이온(Cu²⁺)이 전자를 얻어 환원되어 붉은색 구리(Cu)로 석출되면서 수용액 속 구리 이온의 농도가 줄어 푸른색이 옅어집니다.</p>
     </div>
   </section>
 
@@ -738,6 +808,38 @@
       ['s3-c1','s3-c2','s3-c3','s3-c4'].forEach(id=>document.getElementById(id).classList.remove('show'));
       ['s3-i1','s3-i2'].forEach(id=>document.getElementById(id).classList.remove('go'));
       document.getElementById('s3-eq').classList.remove('show');
+    }
+  });
+
+  // ---------- Station 4 ----------
+  wireStation({
+    run:'s4-run', resetId:'s4-reset',
+    start:function(){
+      const status = document.getElementById('s4-status');
+      const sol = document.getElementById('s4-sol');
+      const deposits = ['s4-d1','s4-d2','s4-d3','s4-d4'].map(id=>document.getElementById(id));
+      const ions = ['s4-i1','s4-i2'].map(id=>document.getElementById(id));
+      const eq = document.getElementById('s4-eq');
+      const resetBtn = document.getElementById('s4-reset');
+
+      status.classList.add('live');
+      status.textContent = '아연판을 수용액에 담갔습니다. 반응이 서서히 진행됩니다...';
+      ions.forEach(i => i.classList.add('go'));
+      setTimeout(()=>{ sol.classList.add('faded'); }, 300);
+      setTimeout(()=>{ deposits.forEach((d,i)=> setTimeout(()=>d.classList.add('show'), i*220)); }, 900);
+      setTimeout(()=>{
+        status.textContent = '반응 완료: 수용액의 푸른색이 옅어졌고, 아연판 표면에 붉은색 구리가 석출되었습니다.';
+        eq.classList.add('show');
+        resetBtn.hidden = false;
+      }, 2000);
+    },
+    onReset:function(){
+      document.getElementById('s4-status').classList.remove('live');
+      document.getElementById('s4-status').textContent = '파란색의 황산 구리(CuSO₄) 수용액에 아연판이 아직 닿지 않았습니다.';
+      document.getElementById('s4-sol').classList.remove('faded');
+      ['s4-d1','s4-d2','s4-d3','s4-d4'].forEach(id=>document.getElementById(id).classList.remove('show'));
+      ['s4-i1','s4-i2'].forEach(id=>document.getElementById(id).classList.remove('go'));
+      document.getElementById('s4-eq').classList.remove('show');
     }
   });
 

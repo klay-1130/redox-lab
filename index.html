@@ -573,7 +573,7 @@
         <div class="stage">
           <div class="rig3">
             <div class="beaker3">
-              <div class="solution" id="s4-sol" style="background:rgba(58,110,165,.55);"></div>
+              <div class="solution blue" id="s4-sol"></div>
               <div class="plate" id="s4-plate"></div>
               <div class="deposit" id="s4-d1" style="left:36px;bottom:28px;"></div>
               <div class="deposit" id="s4-d2" style="left:64px;bottom:44px;"></div>
@@ -841,7 +841,7 @@
       status.classList.add('live');
       status.textContent = '아연판을 수용액에 담갔습니다. 반응이 서서히 진행됩니다...';
       ions.forEach(i => i.classList.add('go'));
-      setTimeout(()=>{ sol.classList.add('faded'); }, 300);
+      setTimeout(()=>{ sol.classList.remove('blue'); sol.classList.add('faded'); }, 300);
       setTimeout(()=>{ deposits.forEach((d,i)=> setTimeout(()=>d.classList.add('show'), i*130)); }, 900);
       setTimeout(()=>{
         status.textContent = '반응 완료: 수용액의 푸른색이 옅어졌고, 아연판 표면에 붉은색 구리가 두껍게 석출되었습니다.';
@@ -853,6 +853,7 @@
       document.getElementById('s4-status').classList.remove('live');
       document.getElementById('s4-status').textContent = '파란색의 황산 구리(CuSO₄) 수용액에 아연판이 아직 닿지 않았습니다.';
       document.getElementById('s4-sol').classList.remove('faded');
+      document.getElementById('s4-sol').classList.add('blue');
       ['s4-d1','s4-d2','s4-d3','s4-d4','s4-d5','s4-d6','s4-d7','s4-d8','s4-d9','s4-d10','s4-d11','s4-d12'].forEach(id=>document.getElementById(id).classList.remove('show'));
       ['s4-i1','s4-i2'].forEach(id=>document.getElementById(id).classList.remove('go'));
       document.getElementById('s4-eq').classList.remove('show');
